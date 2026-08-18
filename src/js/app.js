@@ -17,6 +17,7 @@ const App = {
     this.carregarVersaoApp();
     this.bindNavegacao();
     this.bindConfigForm();
+    this.bindMascarasTelefone();
     
     // Inicializar submódulos
     if (window.OrcamentoModule) window.OrcamentoModule.init();
@@ -24,6 +25,49 @@ const App = {
     if (window.PedidosModule) window.PedidosModule.init();
 
     this.atualizarStatsDashboard();
+  },
+
+  formatarTelefone(valor) {
+    if (!valor) return '';
+    const digits = String(valor).replace(/\D/g, '').slice(0, 11);
+    if (digits.length === 0) return '';
+    if (digits.length <= 2) {
+      return `(${digits}`;
+    }
+    if (digits.length <= 6) {
+      return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    }
+    if (digits.length <= 10) {
+      return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+    }
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
+  },
+
+  bindMascarasTelefone() {
+    const aplicarMascara = (input) => {
+      if (!input || input.dataset.hasPhoneMask) return;
+      input.dataset.hasPhoneMask = 'true';
+      input.setAttribute('maxlength', '15');
+      
+      input.addEventListener('input', (e) => {
+        const formatado = this.formatarTelefone(e.target.value);
+        e.target.value = formatado;
+      });
+
+      // Formatar valor inicial se já existir
+      if (input.value) {
+        input.value = this.formatarTelefone(input.value);
+      }
+    };
+
+    // Aplicar nos campos conhecidos
+    document.querySelectorAll('#orc-cliente-tel, #cfg-telefone, input[type="tel"], input[id*="tel"], input[id*="telefone"], input[id*="whatsapp"]').forEach(aplicarMascara);
+
+    // Observar novos inputs inseridos dinamicamente no DOM
+    const observer = new MutationObserver(() => {
+      document.querySelectorAll('#orc-cliente-tel, #cfg-telefone, input[type="tel"], input[id*="tel"], input[id*="telefone"], input[id*="whatsapp"]').forEach(aplicarMascara);
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
   },
 
   bindNavegacao() {
@@ -186,7 +230,7 @@ const App = {
         if (v) versionEl.textContent = `v${v}`;
       } catch (e) {}
     } else {
-      versionEl.textContent = 'v1.0.5';
+      versionEl.textContent = 'v1.0.6';
     }
   },
 
