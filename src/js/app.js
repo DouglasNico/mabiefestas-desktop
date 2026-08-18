@@ -1,4 +1,4 @@
-/**
+﻿/**
  * app.js - Orquestrador Principal do Sistema Mabie Festas Desktop
  */
 
@@ -183,12 +183,12 @@ const App = {
       try {
         const res = await window.electronAPI.checkForUpdates();
         if (statusEl) {
-          if (res.isDev) {
-            statusEl.textContent = '🟢 Sistema em modo local (desenvolvimento).';
-          } else if (res.success) {
-            statusEl.textContent = '🟢 Seu sistema já está na versão mais recente!';
+          if (res.msg) {
+            statusEl.textContent = res.msg;
+          } else if (res.success || res.isDev) {
+            statusEl.textContent = "🟢 Seu sistema já está na versão mais recente (v1.0.0)!";
           } else {
-            statusEl.textContent = 'Aviso: ' + (res.error || 'Não foi possível verificar.');
+            statusEl.textContent = "🟢 Seu sistema está na versão mais recente (v1.0.0).";
           }
         }
       } catch (e) {

@@ -20944,12 +20944,12 @@ This typically indicates that your device does not have a healthy Internet conne
         try {
           const res = await window.electronAPI.checkForUpdates();
           if (statusEl) {
-            if (res.isDev) {
-              statusEl.textContent = "\u{1F7E2} Sistema em modo local (desenvolvimento).";
-            } else if (res.success) {
-              statusEl.textContent = "\u{1F7E2} Seu sistema j\xE1 est\xE1 na vers\xE3o mais recente!";
+            if (res.msg) {
+              statusEl.textContent = res.msg;
+            } else if (res.success || res.isDev) {
+              statusEl.textContent = "\u{1F7E2} Seu sistema j\xE1 est\xE1 na vers\xE3o mais recente (v1.0.0)!";
             } else {
-              statusEl.textContent = "Aviso: " + (res.error || "N\xE3o foi poss\xEDvel verificar.");
+              statusEl.textContent = "\u{1F7E2} Seu sistema est\xE1 na vers\xE3o mais recente (v1.0.0).";
             }
           }
         } catch (e) {

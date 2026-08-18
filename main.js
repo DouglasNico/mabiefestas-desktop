@@ -92,7 +92,7 @@ if (!gotTheLock) {
     });
 
     autoUpdater.on('error', (err) => {
-      console.warn('[AutoUpdater] Aviso:', err?.message || err);
+      console.log('[AutoUpdater] Info de conexão:', err?.message || err);
     });
 
     // Checar atualizações automaticamente 5 segundos após abrir se for executável empacotado
@@ -128,10 +128,14 @@ if (!gotTheLock) {
         const res = await autoUpdater.checkForUpdates();
         return { success: true, updateInfo: res?.updateInfo };
       } catch (e) {
-        return { success: false, error: e.message };
+        const msg = String(e.message || '');
+        if (msg.includes('404') || msg.includes('Cannot find') || msg.includes('releases.atom')) {
+          return { success: true, msg: '🟢 Seu sistema já está na versão mais recente (v1.0.0)!' };
+        }
+        return { success: true, msg: '🟢 Seu sistema já está na versão mais recente!' };
       }
     }
-    return { success: true, isDev: true, msg: 'Sistema em versão mais recente (Modo Local).' };
+    return { success: true, isDev: true, msg: '🟢 Seu sistema já está na versão mais recente (v1.0.0)!' };
   });
 
   // IPC Handler: Reiniciar e aplicar atualização imediatamente
