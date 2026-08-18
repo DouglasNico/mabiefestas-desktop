@@ -110,8 +110,7 @@ const EstoqueModule = {
       const tot = parseInt(prod.estoqueTotal || 0, 10);
       const alug = parseInt(prod.estoqueAlugado || 0, 10);
       const disponivel = Math.max(0, tot - alug);
-      const statusClass = disponivel > 3 ? 'status-disponivel' : (disponivel > 0 ? 'status-alugado' : 'status-manutencao');
-      const statusTexto = disponivel > 3 ? 'Disponível' : (disponivel > 0 ? 'Últimas Peças' : 'Esgotado');
+      const isDisponivel = disponivel > 0;
       const pctDisp = tot > 0 ? Math.round((disponivel / tot) * 100) : 0;
 
       const fotoUrl = prod.imagem || (prod.imagens && prod.imagens[0]) || 'https://images.unsplash.com/photo-1555244162-803834f70033?w=100';
@@ -121,44 +120,44 @@ const EstoqueModule = {
 
       return `
         <tr>
-          <td style="text-align: center;">
-            <img src="${fotoUrl}" class="item-foto-thumb" alt="${prod.nome}" onerror="this.src='https://images.unsplash.com/photo-1555244162-803834f70033?w=100'">
+          <td style="width: 70px; text-align: center;">
+            <img src="${fotoUrl}" class="estoque-thumb" alt="${prod.nome}" onerror="this.src='https://images.unsplash.com/photo-1555244162-803834f70033?w=100'">
+          </td>
+          <td style="width: 100px;">
+            <span class="badge-code-table">${prod.codigo || 'S/C'}</span>
           </td>
           <td>
-            <span style="font-family: monospace; font-weight:700; color: var(--rosa); font-size: 13px;">${prod.codigo || 'S/C'}</span>
+            <div style="font-weight: 700; color: var(--texto); font-size: 13px; margin-bottom: 2px;">${prod.nome}</div>
+            <span class="badge-tag">${catExata}</span>
           </td>
-          <td>
-            <strong style="display:block; color: var(--texto); font-size: 13px;">${prod.nome}</strong>
-            <span class="badge-tag" style="margin-top: 4px;">${catExata}</span>
-          </td>
-          <td style="text-align: right;">
+          <td style="text-align: right; width: 120px;">
             <strong style="color: var(--rosa); font-size: 13px;">${formatar(prod.diaria || 0)}</strong>
           </td>
-          <td style="text-align: right; color: var(--texto-sec);">
+          <td style="text-align: right; width: 130px; color: var(--texto-sec); font-size: 12px;">
             ${formatar(prod.reposicao || 0)}
           </td>
-          <td>
-            <div style="display:flex; flex-direction:column; gap: 4px;">
-              <div style="display:flex; justify-content:space-between; font-size: 11px;">
-                <span>Disponível: <strong style="color: var(--status-success);">${disponivel}</strong></span>
-                <span style="color: var(--texto-sec);">Total: <strong>${tot}</strong> un</span>
-              </div>
-              <div style="height: 6px; background: rgba(0,0,0,0.06); border-radius: 3px; overflow: hidden;">
-                <div style="width: ${pctDisp}%; height: 100%; background: ${pctDisp > 30 ? 'var(--status-success)' : 'var(--status-danger)'};"></div>
-              </div>
+          <td style="text-align: center; width: 230px;">
+            <div class="estoque-pill-box">
+              <span class="badge-total">Total: ${tot}</span>
+              <span class="badge-alugado">Alugados: ${alug}</span>
+              <span class="badge-disp ${disponivel <= 2 ? 'baixo' : ''}">Disp: ${disponivel}</span>
+            </div>
+            <div class="progress-bar-estoque">
+              <div class="progress-fill" style="width: ${pctDisp}%; background: ${isDisponivel ? 'var(--status-success)' : 'var(--status-danger)'};"></div>
             </div>
           </td>
-          <td style="text-align: center;">
-            <span class="status-badge ${statusClass}">
-              ● ${statusTexto}
+          <td style="text-align: center; width: 110px;">
+            <span style="font-size: 12px; font-weight: 600; color: ${isDisponivel ? 'var(--status-success)' : 'var(--status-danger)'};">
+              <span class="status-dot ${isDisponivel ? 'dot-green' : 'dot-red'}"></span>
+              ${isDisponivel ? 'Disponível' : 'Esgotado'}
             </span>
           </td>
-          <td style="text-align: right;">
-            <div class="acoes-cell" style="justify-content: flex-end; gap: 6px;">
-              <button type="button" class="btn-action-sm btn-action-edit" title="Editar Artigo" onclick="EstoqueModule.abrirModalEditar('${prod.id}')">
-                ✏️ Editar
+          <td style="text-align: right; width: 100px;">
+            <div style="display: inline-flex; align-items: center; gap: 6px;">
+              <button type="button" class="btn-action-icon" title="Editar Artigo" onclick="EstoqueModule.abrirModalEditar('${prod.id}')">
+                ✏️
               </button>
-              <button type="button" class="btn-action-sm btn-action-delete" title="Excluir Artigo" onclick="EstoqueModule.excluirProduto('${prod.id}')">
+              <button type="button" class="btn-action-icon text-danger" title="Excluir Artigo" onclick="EstoqueModule.excluirProduto('${prod.id}')">
                 🗑️
               </button>
             </div>
