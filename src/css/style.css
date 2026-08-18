@@ -67,8 +67,25 @@
     width: 117.65vw !important;
     height: 117.65vh !important;
   }
-  .app-main-layout {
+  #app-main-layout, .app-main-layout {
+    width: 117.65vw !important;
     height: 117.65vh !important;
+    min-height: 117.65vh !important;
+  }
+}
+
+@media (max-width: 992px) {
+  body {
+    zoom: 0.80;
+  }
+  .screen-login {
+    width: 125vw !important;
+    height: 125vh !important;
+  }
+  #app-main-layout, .app-main-layout {
+    width: 125vw !important;
+    height: 125vh !important;
+    min-height: 125vh !important;
   }
 }
 
@@ -869,12 +886,13 @@ body {
 
 /* Rodapé de Ações do Orçamento */
 .sidebar-footer-actions {
-  padding: 16px 22px;
+  padding: 14px 18px;
   background: var(--branco);
   border-top: 1px solid var(--border-card);
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex-shrink: 0 !important;
 }
 
 .btn-primary-action {
@@ -1797,10 +1815,13 @@ body {
   border-color: #e8547a;
 }
 
-.app-main-layout {
+#app-main-layout, .app-main-layout {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  width: 100vw;
+  min-height: 0;
   overflow: hidden;
+  flex: 1;
 }
 
