@@ -612,8 +612,21 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">URL da Imagem / Foto</label>
-            <input type="url" id="prod-imagem" class="form-input-text" placeholder="https://...">
+            <label class="form-label">Fotos do Produto (Upload em Nuvem)</label>
+            <div class="upload-container-box">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px;">
+                <label class="btn-upload-photos">
+                  📷 Escolher Fotos do Computador
+                  <input type="file" id="prod-file-input" accept="image/*" multiple style="display: none;" onchange="EstoqueModule.handleFotosUpload(event)">
+                </label>
+                <span id="upload-status-badge" style="font-size: 11px; font-weight: 700; color: var(--rosa);"></span>
+              </div>
+              <p style="font-size: 11px; color: var(--texto-sec); margin-bottom: 8px;">
+                A primeira foto será a capa principal. Selecione uma ou várias fotos do seu computador.
+              </p>
+              <div id="prod-previews-container" class="previews-grid-box"></div>
+              <input type="hidden" id="prod-imagem" value="">
+            </div>
           </div>
 
           <div class="form-group">

@@ -1825,3 +1825,93 @@ body {
   flex: 1;
 }
 
+
+/* Componente de Upload de Fotos em Nuvem (Cloudinary) */
+.upload-container-box {
+  background: var(--bg-subtle);
+  border: 1px dashed var(--rosa-borda);
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+
+.btn-upload-photos {
+  background: var(--rosa-claro);
+  color: var(--rosa);
+  border: 1px solid var(--rosa-borda);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition-fast);
+}
+
+.btn-upload-photos:hover {
+  background: var(--rosa);
+  color: #fff;
+  border-color: var(--rosa);
+}
+
+.previews-grid-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-height: 40px;
+  align-items: center;
+}
+
+.preview-thumb-card {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--border-card);
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.preview-thumb-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.preview-thumb-card .badge-capa {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(232, 84, 122, 0.92);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  text-align: center;
+  padding: 2px 0;
+  text-transform: uppercase;
+}
+
+.preview-thumb-card .btn-remove-thumb {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.preview-thumb-card .btn-remove-thumb:hover {
+  background: #ef4444;
+}
