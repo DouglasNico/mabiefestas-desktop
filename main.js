@@ -62,6 +62,16 @@ if (!gotTheLock) {
   function setupAutoUpdater() {
     if (!autoUpdater) return;
 
+    try {
+      autoUpdater.setFeedURL({
+        provider: 'github',
+        owner: 'DouglasNico',
+        repo: 'mabiefestas-desktop'
+      });
+    } catch (e) {
+      console.log('[AutoUpdater] FeedURL setup:', e?.message || e);
+    }
+
     autoUpdater.autoDownload = true;
     autoUpdater.autoInstallOnAppQuit = true;
 
@@ -123,19 +133,21 @@ if (!gotTheLock) {
 
   // IPC Handler: Verificar atualizações manualmente pelo botão das Configurações
   ipcMain.handle('check-for-updates', async () => {
+    const currentVer = app.getVersion();
     if (autoUpdater && app.isPackaged) {
       try {
         const res = await autoUpdater.checkForUpdates();
         return { success: true, updateInfo: res?.updateInfo };
       } catch (e) {
+        console.error('Erro ao verificar atualização:', e);
         const msg = String(e.message || '');
         if (msg.includes('404') || msg.includes('Cannot find') || msg.includes('releases.atom')) {
-          return { success: true, msg: '🟢 Seu sistema já está na versão mais recente (v1.0.0)!' };
+          return { success: true, msg: `🟢 Seu sistema já está na versão mais recente (v${currentVer})!` };
         }
-        return { success: true, msg: '🟢 Seu sistema já está na versão mais recente!' };
+        return { success: false, error: msg, msg: `Não foi possível verificar no momento (v${currentVer}).` };
       }
     }
-    return { success: true, isDev: true, msg: '🟢 Seu sistema já está na versão mais recente (v1.0.0)!' };
+    return { success: true, isDev: true, msg: `🟢 Modo de desenvolvimento (v${currentVer}).` };
   });
 
   // IPC Handler: Obter versão dinâmica do app
