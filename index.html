@@ -1,0 +1,645 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mabie Festas - Gestão & Orçamentos</title>
+  <link rel="stylesheet" href="src/css/style.css">
+</head>
+<body>
+
+  <!-- ========================================== -->
+  <!-- TELA DE LOGIN (FIREBASE AUTH)              -->
+  <!-- ========================================== -->
+  <div id="screen-login" class="screen-login">
+    <div class="login-card">
+      <div class="login-brand-header">
+        <img src="src/assets/logo4.png" alt="Mabie Festas" class="login-logo-img" onerror="this.src='src/assets/logo.png'">
+        <h2 class="login-title">MABIE FESTAS</h2>
+        <p class="login-subtitle">Gestão de Acervo & Orçamentos</p>
+      </div>
+
+      <div class="login-lock-banner">
+        <span>🔒 Acesso Restrito a Administradores</span>
+      </div>
+
+      <form id="form-login-desktop" class="login-form">
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label" for="login-email">E-mail de Acesso</label>
+          <div class="input-icon-wrap">
+            <span class="input-icon">✉️</span>
+            <input type="email" id="login-email" class="form-input-text" placeholder="seuemail@mabiefestas.com.br" required autofocus autocomplete="username">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label" for="login-senha">Senha</label>
+          <div class="input-icon-wrap">
+            <span class="input-icon">🔑</span>
+            <input type="password" id="login-senha" class="form-input-text" placeholder="••••••••" required autocomplete="current-password">
+          </div>
+        </div>
+
+        <div id="login-error-msg" class="login-error-box" style="display: none;"></div>
+
+        <button type="submit" id="btn-login-submit" class="btn-primary-action btn-login-submit">
+          <span class="btn-spinner" id="btn-login-spinner" style="display: none;">⏳</span>
+          <span id="btn-login-texto">🔒 Entrar no Sistema</span>
+        </button>
+      </form>
+
+      <div class="login-footer-info">
+        <p>Mabie Festas • Campinas-SP</p>
+        <span class="login-cloud-status">☁️ Nuvem Firebase Conectada</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- APP MAIN WRAPPER                           -->
+  <!-- ========================================== -->
+  <div id="app-main-layout" class="app-main-layout" style="display: none;">
+
+  <!-- ========================================== -->
+  <!-- APP HEADER                                 -->
+  <!-- ========================================== -->
+  <header class="app-header">
+    <div class="brand-logo-area">
+      <img src="src/assets/logo4.png" alt="Mabie Festas" class="brand-logo-img" onerror="this.src='src/assets/logo.png'">
+      <div>
+        <h1 class="brand-name">MABIE <span>FESTAS</span></h1>
+        <p class="brand-tagline">Locação de Artigos & Montador de Orçamentos</p>
+      </div>
+    </div>
+
+    <!-- Navegação Superior -->
+    <nav class="app-nav">
+      <button type="button" class="nav-btn active" data-tab="orcamento">
+        🛒 Montar Orçamento
+      </button>
+      <button type="button" class="nav-btn" data-tab="estoque">
+        📦 Estoque & Artigos
+      </button>
+      <button type="button" class="nav-btn" data-tab="pedidos">
+        📋 Pedidos & Devoluções
+        <span class="nav-counter-badge" id="nav-badge-devolucoes" style="display: none;">0</span>
+      </button>
+      <button type="button" class="nav-btn" data-tab="config">
+        ⚙️ Configurações
+      </button>
+    </nav>
+
+    <!-- Indicador de Status & Perfil do Usuário -->
+    <div class="header-user-sync-area">
+      <div class="sync-badge-wrapper" onclick="FirebaseSync.sincronizarTudo()" title="Clique para sincronizar com o site agora">
+        <span class="sync-badge sync-online" id="header-sync-status">🟢 Nuvem Conectada</span>
+        <button type="button" class="btn-sync-icon" id="btn-header-sync" title="Sincronizar agora">🔄</button>
+      </div>
+      <div class="user-profile-badge">
+        <span class="user-avatar-icon">👤</span>
+        <span class="user-email-text" id="header-user-email">admin</span>
+        <button type="button" class="btn-logout-header" id="btn-header-logout" title="Encerrar Sessão">🚪 Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- MAIN VIEWPORT (PANELS)                     -->
+  <!-- ========================================== -->
+  <main class="app-viewport">
+
+    <!-- ------------------------------------------------ -->
+    <!-- ABA 1: MONTADOR DE ORÇAMENTOS (SPLIT VIEW)       -->
+    <!-- ------------------------------------------------ -->
+    <section class="tab-content-panel active" id="tab-orcamento">
+      <div class="orcamento-split-view">
+        
+        <!-- Lado Esquerdo: Catálogo Visual -->
+        <div class="catalogo-section">
+          <div class="catalogo-top-bar">
+            <div class="search-box-wrapper">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="catalogo-busca" class="input-search-custom" 
+                     placeholder="Buscar por réchaud, taça, prato, código (ex: REC-01)...">
+            </div>
+            <div class="categorias-scroll-container" id="catalogo-categorias">
+              <!-- Renderizado via JS -->
+            </div>
+          </div>
+
+          <div class="catalogo-grid-wrapper">
+            <div class="catalogo-grid" id="catalogo-grid">
+              <!-- Itens do Catálogo inseridos via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Lado Direito: Carrinho & Formulário de Orçamento -->
+        <aside class="orcamento-sidebar">
+          <div class="sidebar-header">
+            <div class="sidebar-title-box">
+              <span class="sidebar-title" id="sidebar-orcamento-title">Orçamento em Andamento</span>
+              <span class="badge-items-count" id="carrinho-total-badge">0 itens</span>
+            </div>
+            <button type="button" class="btn-clear-cart" id="btn-limpar-orcamento" onclick="OrcamentoModule.limparCarrinho()">
+              Limpar Tudo
+            </button>
+          </div>
+
+          <!-- Banner de Aviso ao Editar Pedido Existente -->
+          <div id="banner-edicao-pedido" style="display: none; background: #fff0f4; border-bottom: 1px solid #f5c2d1; padding: 10px 20px; align-items: center; justify-content: space-between;">
+            <span style="font-size: 12px; font-weight: 700; color: #e8547a;" id="banner-edicao-texto">
+              ✏️ Editando Pedido #...
+            </span>
+            <button type="button" class="btn-sec" style="font-size: 10px; padding: 3px 8px;" onclick="OrcamentoModule.cancelarEdicao()">
+              Cancelar Edição
+            </button>
+          </div>
+
+          <div class="sidebar-scrollable-content">
+            <!-- Lista de Itens Adicionados -->
+            <div class="form-section-card">
+              <div class="form-section-title">📦 Artigos Selecionados</div>
+              <div class="carrinho-lista-container" id="carrinho-itens-lista">
+                <!-- Inserido dinamicamente via JS -->
+              </div>
+            </div>
+
+            <!-- Dados do Cliente -->
+            <div class="form-section-card">
+              <div class="form-section-title">👤 Dados do Cliente</div>
+              <div class="form-group">
+                <label class="form-label">Nome Completo *</label>
+                <input type="text" id="orc-cliente-nome" class="form-input-text" placeholder="Ex: Mariana Silveira (Casamento)">
+              </div>
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label">WhatsApp / Tel</label>
+                  <input type="text" id="orc-cliente-tel" class="form-input-text" placeholder="(11) 99999-9999">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">E-mail</label>
+                  <input type="email" id="orc-cliente-email" class="form-input-text" placeholder="cliente@email.com">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Local do Evento / Entrega</label>
+                <input type="text" id="orc-cliente-endereco" class="form-input-text" placeholder="Ex: Buffet Jardim Real - Salão Principal">
+              </div>
+            </div>
+
+            <!-- Cronograma da Locação -->
+            <div class="form-section-card">
+              <div class="form-section-title">📅 Cronograma do Evento</div>
+              <div class="form-grid-3">
+                <div class="form-group">
+                  <label class="form-label">Data Evento</label>
+                  <input type="date" id="orc-data-evento" class="form-input-text">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Retirada</label>
+                  <input type="date" id="orc-data-retirada" class="form-input-text">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Devolução</label>
+                  <input type="date" id="orc-data-devolucao" class="form-input-text">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Observações da Montagem / Pedido</label>
+                <textarea id="orc-obs" class="form-textarea-custom" rows="2" placeholder="Ex: Deixar separado no horário da manhã."></textarea>
+              </div>
+            </div>
+
+            <!-- Ajustes Financeiros -->
+            <div class="form-section-card">
+              <div class="form-section-title">💰 Logística & Condições</div>
+              <div class="form-grid-3">
+                <div class="form-group">
+                  <label class="form-label">Frete (R$)</label>
+                  <input type="number" id="orc-frete" class="form-input-text" value="0" min="0" step="10">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Desconto (R$)</label>
+                  <input type="number" id="orc-desconto" class="form-input-text" value="0" min="0" step="5">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Sinal (%)</label>
+                  <input type="number" id="orc-sinal-pct" class="form-input-text" value="50" min="10" max="100">
+                </div>
+              </div>
+            </div>
+
+            <!-- Resumo Financeiro Dinâmico -->
+            <div class="resumo-financeiro-card">
+              <div class="resumo-row">
+                <span>Subtotal Itens:</span>
+                <span id="resumo-subtotal">R$ 0,00</span>
+              </div>
+              <div class="resumo-row">
+                <span>Taxa de Frete:</span>
+                <span id="resumo-frete">R$ 0,00</span>
+              </div>
+              <div class="resumo-row">
+                <span>Desconto:</span>
+                <span id="resumo-desconto">- R$ 0,00</span>
+              </div>
+              <div class="resumo-row destaque-total">
+                <span>TOTAL DO ORÇAMENTO:</span>
+                <span id="resumo-total">R$ 0,00</span>
+              </div>
+              <div class="resumo-row sinal-row">
+                <span>Sinal p/ Reserva:</span>
+                <span id="resumo-sinal">R$ 0,00</span>
+              </div>
+              <div class="resumo-row" style="font-size: 11px; margin-top: 4px;">
+                <span>Saldo na Entrega:</span>
+                <span id="resumo-saldo">R$ 0,00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botões de Ação do Orçamento -->
+          <div class="sidebar-footer-actions">
+            <button type="button" class="btn-primary-action" id="btn-salvar-pedido" onclick="OrcamentoModule.salvarComoPedido()">
+              <span id="btn-salvar-pedido-texto">💾 Confirmar & Salvar Pedido</span>
+            </button>
+            <div class="secondary-actions-row">
+              <button type="button" class="btn-secondary-action" onclick="OrcamentoModule.gerarPDF()">
+                <span>📄 Gerar PDF</span>
+              </button>
+              <button type="button" class="btn-secondary-action btn-whatsapp" onclick="OrcamentoModule.copiarWhatsApp()">
+                <span>💬 Copiar p/ WhatsApp</span>
+              </button>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </section>
+
+    <!-- ------------------------------------------------ -->
+    <!-- ABA 2: GESTÃO DE ESTOQUE & ARTIGOS               -->
+    <!-- ------------------------------------------------ -->
+    <section class="tab-content-panel" id="tab-estoque">
+      <div class="view-full-container">
+        
+        <!-- Header da Vista -->
+        <div class="view-header-bar">
+          <div class="view-title-area">
+            <h2>📦 Gestão de Estoque & Acervo de Locação</h2>
+            <p>Controle de quantidade total, itens em eventos e valores de reposição.</p>
+          </div>
+          <button type="button" class="btn-primary-action" style="width: auto; padding: 10px 20px;" 
+                  onclick="EstoqueModule.abrirModalNovo()">
+            ➕ Novo Artigo de Festa
+          </button>
+        </div>
+
+        <!-- Indicadores de Estoque -->
+        <div class="stats-top-strip">
+          <div class="stat-card-mini">
+            <div class="stat-icon">🏷️</div>
+            <div class="stat-info">
+              <span class="stat-label">Total no Acervo</span>
+              <span class="stat-val" id="stat-estoque-total">0</span>
+            </div>
+          </div>
+          <div class="stat-card-mini">
+            <div class="stat-icon">🚚</div>
+            <div class="stat-info">
+              <span class="stat-label">Itens Alugados</span>
+              <span class="stat-val" id="stat-estoque-alug" style="color: var(--status-warning);">0</span>
+            </div>
+          </div>
+          <div class="stat-card-mini">
+            <div class="stat-icon">✨</div>
+            <div class="stat-info">
+              <span class="stat-label">Disponíveis no Galpão</span>
+              <span class="stat-val" id="stat-estoque-disp" style="color: var(--status-success);">0</span>
+            </div>
+          </div>
+          <div class="stat-card-mini">
+            <div class="stat-icon">💎</div>
+            <div class="stat-info">
+              <span class="stat-label">Valor do Patrimônio</span>
+              <span class="stat-val gold" id="stat-estoque-patrimonio">R$ 0,00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barra de Busca & Filtros -->
+        <div style="padding: 12px 24px; background: var(--bg-surface-1); display: flex; gap: 14px; border-bottom: 1px solid var(--border-subtle);">
+          <div class="search-box-wrapper" style="flex: 1;">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="estoque-busca" class="input-search-custom" placeholder="Buscar por código ou nome do produto...">
+          </div>
+          <select id="estoque-filtro-cat" class="form-select-custom" style="width: 240px;">
+            <option value="todos">✨ Todas as Categorias</option>
+            <option value="rechaud">🍲 Réchauds</option>
+            <option value="toalhas">✨ Toalhas & Mesa</option>
+            <option value="pratos">🍽️ Pratos & Louças</option>
+            <option value="talheres">🍴 Talheres</option>
+            <option value="tacas">🍷 Copos & Taças</option>
+            <option value="buffet">🍹 Buffet</option>
+          </select>
+        </div>
+
+        <!-- Tabela -->
+        <div class="table-scroll-area">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th style="width: 70px;">Foto</th>
+                <th style="width: 100px;">Código</th>
+                <th>Artigo / Categoria</th>
+                <th style="text-align: right; width: 120px;">Diária</th>
+                <th style="text-align: right; width: 130px;">Reposição</th>
+                <th style="text-align: center; width: 230px;">Ocupação / Saldo</th>
+                <th style="text-align: center; width: 110px;">Status</th>
+                <th style="text-align: right; width: 100px;">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="estoque-tabela-corpo">
+              <!-- Inserido dinamicamente via JS -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ------------------------------------------------ -->
+    <!-- ABA 3: PEDIDOS & DEVOLUÇÕES                      -->
+    <!-- ------------------------------------------------ -->
+    <section class="tab-content-panel" id="tab-pedidos">
+      <div class="view-full-container">
+        
+        <!-- Header da Vista -->
+        <div class="view-header-bar">
+          <div class="view-title-area">
+            <h2>📋 Painel de Pedidos & Controle de Devoluções</h2>
+            <p>Acompanhe o status dos eventos, reservas de artigos e devoluções com alerta de atraso.</p>
+          </div>
+        </div>
+
+        <!-- Stats Rápidos de Pedidos -->
+        <div class="stats-top-strip">
+          <div class="stat-card-mini">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-info">
+              <span class="stat-label">Reservas Confirmadas</span>
+              <span class="stat-val" id="stat-pedidos-confirmados">0</span>
+            </div>
+          </div>
+          <div class="stat-card-mini">
+            <div class="stat-icon">🚚</div>
+            <div class="stat-info">
+              <span class="stat-label">Em Evento (Alugados)</span>
+              <span class="stat-val" id="stat-pedidos-alugados" style="color: var(--status-warning);">0</span>
+            </div>
+          </div>
+          <div class="stat-card-mini">
+            <div class="stat-icon">🔔</div>
+            <div class="stat-info">
+              <span class="stat-label">Devoluções Hoje / Atrasadas</span>
+              <span class="stat-val" id="stat-pedidos-devolucoes-hoje" style="color: var(--status-danger);">0</span>
+            </div>
+          </div>
+          <div class="stat-card-mini">
+            <div class="stat-icon">✅</div>
+            <div class="stat-info">
+              <span class="stat-label">Sincronização</span>
+              <span class="stat-val" style="font-size: 13px; color: var(--status-success);">Pronto</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barra de Busca & Filtros -->
+        <div style="padding: 12px 24px; background: var(--bg-surface-1); display: flex; gap: 14px; border-bottom: 1px solid var(--border-subtle);">
+          <div class="search-box-wrapper" style="flex: 1;">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="pedidos-busca" class="input-search-custom" placeholder="Buscar por número do orçamento, cliente ou telefone...">
+          </div>
+          <select id="pedidos-filtro-status" class="form-select-custom" style="width: 220px;">
+            <option value="todos">Todos os Status</option>
+            <option value="Pendente">Pendente</option>
+            <option value="Confirmado">Confirmado</option>
+            <option value="Alugado">Alugado (Em Locação)</option>
+            <option value="Devolvido">Devolvido (Concluído)</option>
+            <option value="Cancelado">Cancelado</option>
+          </select>
+        </div>
+
+        <!-- Cards de Pedidos -->
+        <div class="pedidos-cards-grid" id="pedidos-lista">
+          <!-- Inserido dinamicamente via JS -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ------------------------------------------------ -->
+    <!-- ABA 4: CONFIGURAÇÕES & DADOS DA EMPRESA          -->
+    <!-- ------------------------------------------------ -->
+    <section class="tab-content-panel" id="tab-config">
+      <div class="view-full-container">
+        
+        <div class="view-header-bar">
+          <div class="view-title-area">
+            <h2>⚙️ Configurações & Dados da Mabie Festas</h2>
+            <p>Personalize os dados da sua empresa que saem nos orçamentos em PDF, WhatsApp e termos de locação.</p>
+          </div>
+        </div>
+
+        <div class="config-scroll-view">
+          <form id="form-configuracoes">
+            
+            <!-- Dados da Empresa -->
+            <div class="config-card-box">
+              <h3>🏢 Dados Cadastrais & Contato</h3>
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label">Nome da Empresa</label>
+                  <input type="text" id="cfg-nome-empresa" class="form-input-text" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Slogan / Descrição</label>
+                  <input type="text" id="cfg-slogan" class="form-input-text">
+                </div>
+              </div>
+              <div class="form-grid-3">
+                <div class="form-group">
+                  <label class="form-label">CNPJ / CPF</label>
+                  <input type="text" id="cfg-cnpj" class="form-input-text">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">WhatsApp de Atendimento</label>
+                  <input type="text" id="cfg-telefone" class="form-input-text">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Instagram</label>
+                  <input type="text" id="cfg-instagram" class="form-input-text">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Cidade / Estado</label>
+                <input type="text" id="cfg-cidade" class="form-input-text">
+              </div>
+            </div>
+
+            <!-- Dados de Pagamento & Padrões -->
+            <div class="config-card-box">
+              <h3>💳 Dados Bancários & Condições Padrão</h3>
+              <div class="form-group">
+                <label class="form-label">Chave PIX para Recebimento de Sinais</label>
+                <input type="text" id="cfg-chave-pix" class="form-input-text" placeholder="Ex: contato@mabiefestas.com.br (PIX E-mail)">
+              </div>
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label">Taxa Padrão de Frete Sugerida (R$)</label>
+                  <input type="number" id="cfg-frete-padrao" class="form-input-text" step="5">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Percentual de Sinal Padrão (%)</label>
+                  <input type="number" id="cfg-sinal-padrao" class="form-input-text" min="10" max="100">
+                </div>
+              </div>
+            </div>
+
+            <!-- Regras do Contrato -->
+            <div class="config-card-box">
+              <h3>📜 Regras e Termos de Locação (Impressos no PDF)</h3>
+              <div class="form-group">
+                <label class="form-label">Regras (Uma por linha):</label>
+                <textarea id="cfg-regras" class="form-textarea-custom" rows="6"></textarea>
+              </div>
+            </div>
+
+            <!-- Botão Salvar -->
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 24px;">
+              <button type="submit" class="btn-primary-action" style="width: auto; padding: 12px 32px;">
+                💾 Salvar Todas as Configurações
+              </button>
+            </div>
+
+            <!-- Backup & Restauração -->
+            <div class="config-card-box" style="border-color: rgba(255, 255, 255, 0.1);">
+              <h3>💾 Backup & Segurança dos Dados Locais</h3>
+              <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">
+                Exporte todo o seu catálogo, pedidos e configurações para um arquivo de segurança no seu computador.
+              </p>
+              <div style="display: flex; gap: 12px;">
+                <button type="button" class="btn-secondary-action" onclick="App.exportarBackup()">
+                  📤 Exportar Backup JSON
+                </button>
+                <label class="btn-secondary-action" style="cursor: pointer; margin: 0;">
+                  📥 Importar Backup JSON
+                  <input type="file" accept=".json" style="display: none;" onchange="App.importarBackup(event)">
+                </label>
+              </div>
+            </div>
+
+            <!-- Atualizações do Sistema (Auto-Update) -->
+            <div class="config-card-box" style="border-color: #f5c2d1; background: #ffffff;">
+              <h3>🚀 Atualizações do Sistema (Auto-Update)</h3>
+              <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">
+                Versão instalada: <strong id="cfg-app-version" style="color: #e8547a;">v1.0.0</strong> • O sistema busca e baixa atualizações automaticamente em segundo plano pelo GitHub.
+              </p>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <button type="button" class="btn-secondary-action" onclick="App.verificarAtualizacoes()">
+                  🔍 Verificar Atualizações Agora
+                </button>
+                <span id="cfg-update-status" style="font-size: 12px; font-weight: 600; color: #27ae60;"></span>
+              </div>
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MODAL: CADASTRO / EDIÇÃO DE PRODUTO        -->
+  <!-- ========================================== -->
+  <div class="modal-overlay" id="modal-produto">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-produto-title">✨ Cadastrar Novo Artigo</h3>
+        <button type="button" class="btn-modal-close" onclick="EstoqueModule.fecharModal()">✕</button>
+      </div>
+      <form id="form-produto" onsubmit="EstoqueModule.salvarProduto(event)">
+        <div class="modal-body">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Código do Item</label>
+              <input type="text" id="prod-codigo" class="form-input-text" placeholder="Ex: REC-01">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Categoria *</label>
+              <select id="prod-categoria" class="form-select-custom" required>
+                <option value="rechaud">🍲 Réchauds</option>
+                <option value="toalhas">✨ Toalhas & Mesa</option>
+                <option value="pratos">🍽️ Pratos & Louças</option>
+                <option value="talheres">🍴 Talheres</option>
+                <option value="tacas">🍷 Copos & Taças</option>
+                <option value="buffet">🍹 Buffet</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Nome do Artigo / Descrição *</label>
+            <input type="text" id="prod-nome" class="form-input-text" placeholder="Ex: Réchaud Inox 2 Cubas 9L" required>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label">Diária de Locação (R$) *</label>
+              <input type="number" id="prod-diaria" class="form-input-text" step="0.10" min="0.50" placeholder="45.00" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Valor de Reposição (R$)</label>
+              <input type="number" id="prod-reposicao" class="form-input-text" step="1.00" min="1.00" placeholder="380.00">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Qtd Total no Acervo *</label>
+              <input type="number" id="prod-estoque-total" class="form-input-text" min="1" placeholder="10" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">URL da Imagem / Foto</label>
+            <input type="url" id="prod-imagem" class="form-input-text" placeholder="https://...">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Detalhes Técnicos / Observações</label>
+            <textarea id="prod-descricao" class="form-textarea-custom" rows="2" placeholder="Material, dimensões, voltagem ou cuidados..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary-action" onclick="EstoqueModule.fecharModal()">Cancelar</button>
+          <button type="submit" class="btn-primary-action" style="width: auto; padding: 10px 24px;">Salvar Artigo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Container de Toasts -->
+  <div id="toast-container"></div>
+
+  </div> <!-- Fim app-main-layout -->
+
+  <!-- Scripts -->
+  <script src="src/js/storage.js"></script>
+  <script src="src/js/pdf-generator.js"></script>
+  <script src="src/js/orcamento.js"></script>
+  <script src="src/js/estoque.js"></script>
+  <script src="src/js/pedidos.js"></script>
+  <script type="module" src="src/js/app.js"></script>
+</body>
+</html>

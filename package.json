@@ -1,0 +1,61 @@
+{
+  "name": "mabie-festas-gestao",
+  "version": "1.0.0",
+  "description": "Sistema Oficial de Gestão de Acervo, Orçamentos e Estoque - Mabie Festas",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win",
+    "build:portable": "electron-builder --win portable",
+    "release": "electron-builder --win --publish always"
+  },
+  "keywords": [
+    "gestao",
+    "estoque",
+    "orcamento",
+    "mabie-festas",
+    "electron"
+  ],
+  "author": "Mabie Festas",
+  "license": "ISC",
+  "dependencies": {
+    "electron-updater": "^6.3.9"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.mabiefestas.gestao",
+    "productName": "Mabie Festas Gestão",
+    "publish": {
+      "provider": "github",
+      "owner": "DouglasNico",
+      "repo": "mabiefestas-desktop"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "src/assets/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Mabie Festas"
+    }
+  }
+}
