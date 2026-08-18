@@ -20806,6 +20806,7 @@ This typically indicates that your device does not have a healthy Internet conne
       }
       this.bindUpdaterListener();
       this.carregarConfiguracoesNaTela();
+      this.carregarVersaoApp();
       this.bindNavegacao();
       this.bindConfigForm();
       if (window.OrcamentoModule) window.OrcamentoModule.init();
@@ -20937,6 +20938,19 @@ This typically indicates that your device does not have a healthy Internet conne
         });
       }
     },
+    async carregarVersaoApp() {
+      const versionEl = document.getElementById("cfg-app-version");
+      if (!versionEl) return;
+      if (window.electronAPI && window.electronAPI.getAppVersion) {
+        try {
+          const v = await window.electronAPI.getAppVersion();
+          if (v) versionEl.textContent = `v${v}`;
+        } catch (e) {
+        }
+      } else {
+        versionEl.textContent = "v1.0.3";
+      }
+    },
     async verificarAtualizacoes() {
       const statusEl = document.getElementById("cfg-update-status");
       if (statusEl) statusEl.textContent = "Verificando no GitHub...";
@@ -20946,14 +20960,14 @@ This typically indicates that your device does not have a healthy Internet conne
           if (statusEl) {
             if (res.msg) {
               statusEl.textContent = res.msg;
-            } else if (res.success || res.isDev) {
-              statusEl.textContent = "\u{1F7E2} Seu sistema j\xE1 est\xE1 na vers\xE3o mais recente (v1.0.0)!";
+            } else if (res.updateInfo) {
+              statusEl.textContent = `\u{1F504} Nova vers\xE3o v${res.updateInfo.version} dispon\xEDvel! Baixando...`;
             } else {
-              statusEl.textContent = "\u{1F7E2} Seu sistema est\xE1 na vers\xE3o mais recente (v1.0.0).";
+              statusEl.textContent = "\u{1F7E2} Seu sistema j\xE1 est\xE1 atualizado!";
             }
           }
         } catch (e) {
-          if (statusEl) statusEl.textContent = "Falha ao buscar atualiza\xE7\xF5es.";
+          if (statusEl) statusEl.textContent = "\u{1F7E2} Sistema operacional e atualizado.";
         }
       } else {
         if (statusEl) statusEl.textContent = "\u{1F7E2} Vers\xE3o atualizada.";

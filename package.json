@@ -1,6 +1,6 @@
 {
   "name": "mabie-festas-gestao",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Sistema Oficial de Gestão de Acervo, Orçamentos e Estoque - Mabie Festas",
   "main": "main.js",
   "scripts": {

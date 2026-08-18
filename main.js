@@ -138,6 +138,11 @@ if (!gotTheLock) {
     return { success: true, isDev: true, msg: '🟢 Seu sistema já está na versão mais recente (v1.0.0)!' };
   });
 
+  // IPC Handler: Obter versão dinâmica do app
+  ipcMain.handle('get-app-version', () => {
+    return app.getVersion();
+  });
+
   // IPC Handler: Reiniciar e aplicar atualização imediatamente
   ipcMain.handle('quit-and-install-update', () => {
     if (autoUpdater) {

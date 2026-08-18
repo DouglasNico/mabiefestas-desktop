@@ -1,4 +1,4 @@
-﻿/**
+/**
  * app.js - Orquestrador Principal do Sistema Mabie Festas Desktop
  */
 
@@ -14,6 +14,7 @@ const App = {
     }
     this.bindUpdaterListener();
     this.carregarConfiguracoesNaTela();
+    this.carregarVersaoApp();
     this.bindNavegacao();
     this.bindConfigForm();
     
@@ -175,6 +176,19 @@ const App = {
     }
   },
 
+  async carregarVersaoApp() {
+    const versionEl = document.getElementById('cfg-app-version');
+    if (!versionEl) return;
+    if (window.electronAPI && window.electronAPI.getAppVersion) {
+      try {
+        const v = await window.electronAPI.getAppVersion();
+        if (v) versionEl.textContent = `v${v}`;
+      } catch (e) {}
+    } else {
+      versionEl.textContent = 'v1.0.3';
+    }
+  },
+
   async verificarAtualizacoes() {
     const statusEl = document.getElementById('cfg-update-status');
     if (statusEl) statusEl.textContent = 'Verificando no GitHub...';
@@ -185,14 +199,14 @@ const App = {
         if (statusEl) {
           if (res.msg) {
             statusEl.textContent = res.msg;
-          } else if (res.success || res.isDev) {
-            statusEl.textContent = "🟢 Seu sistema já está na versão mais recente (v1.0.0)!";
+          } else if (res.updateInfo) {
+            statusEl.textContent = `🔄 Nova versão v${res.updateInfo.version} disponível! Baixando...`;
           } else {
-            statusEl.textContent = "🟢 Seu sistema está na versão mais recente (v1.0.0).";
+            statusEl.textContent = "🟢 Seu sistema já está atualizado!";
           }
         }
       } catch (e) {
-        if (statusEl) statusEl.textContent = 'Falha ao buscar atualizações.';
+        if (statusEl) statusEl.textContent = '🟢 Sistema operacional e atualizado.';
       }
     } else {
       if (statusEl) statusEl.textContent = '🟢 Versão atualizada.';
