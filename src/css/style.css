@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    MABIE FESTAS - DESIGN SYSTEM DESKTOP (Tema Claro Oficial / Clean Rose)
    Tipografia: Playfair Display + Poppins + Plus Jakarta Sans
    Paleta Oficial: Rosa #e8547a | Claro #fff0f4 | Fundo #fcf9fa | Texto #2a2228
@@ -126,28 +126,30 @@ body {
    APP HEADER & NAVIGATION
    ========================================================================== */
 .app-header {
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border-card);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 28px;
-  height: 74px;
+  padding: 0 20px;
+  height: 70px;
   flex-shrink: 0;
   z-index: 50;
   box-shadow: var(--sombra-leve);
+  gap: 16px;
 }
 
 .brand-logo-area {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
+  flex-shrink: 0;
 }
 
 .brand-logo-img {
-  height: 52px;
-  max-width: 160px;
+  height: 46px;
+  max-width: 140px;
   object-fit: contain;
   filter: drop-shadow(0 2px 8px rgba(232, 84, 122, 0.25));
   transition: transform var(--transition-fast);
@@ -159,7 +161,7 @@ body {
 
 .brand-name {
   font-family: var(--font-heading);
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 800;
   letter-spacing: 0.5px;
   color: var(--texto);
@@ -172,7 +174,7 @@ body {
 
 .brand-tagline {
   font-family: var(--font-subheading);
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--texto-sec);
   font-weight: 500;
 }
@@ -181,11 +183,12 @@ body {
 .app-nav {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   background: var(--bg-subtle);
-  padding: 5px;
+  padding: 4px;
   border-radius: var(--radius-xl);
   border: 1px solid var(--border-subtle);
+  flex-shrink: 0;
 }
 
 .nav-btn {
@@ -193,16 +196,17 @@ body {
   border: none;
   color: var(--texto-sec);
   font-family: var(--font-subheading);
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
-  padding: 8px 18px;
+  padding: 7px 14px;
   border-radius: var(--radius-lg);
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   transition: var(--transition-fast);
   position: relative;
+  white-space: nowrap;
 }
 
 .nav-btn:hover {
@@ -227,25 +231,114 @@ body {
   line-height: 1;
 }
 
-.header-status-indicator {
+/* Área de Usuário & Status de Nuvem Conectada */
+.header-user-sync-area {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--texto-sec);
-  background: var(--rosa-claro);
-  padding: 6px 14px;
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--rosa-borda);
+  gap: 10px;
+  flex-shrink: 0;
 }
 
-.pulse-circle {
-  width: 8px;
-  height: 8px;
-  background: var(--rosa);
-  border-radius: 50%;
-  box-shadow: 0 0 8px var(--rosa);
+.sync-badge-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(39, 174, 96, 0.08);
+  border: 1px solid rgba(39, 174, 96, 0.25);
+  padding: 5px 12px;
+  border-radius: var(--radius-xl);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.sync-badge-wrapper:hover {
+  background: rgba(39, 174, 96, 0.15);
+  border-color: rgba(39, 174, 96, 0.4);
+}
+
+.sync-badge {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #1b7a43;
+  white-space: nowrap;
+}
+
+.btn-sync-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-fast);
+}
+
+.btn-sync-icon:hover {
+  transform: rotate(180deg);
+}
+
+.user-profile-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-card);
+  padding: 5px 12px;
+  border-radius: var(--radius-xl);
+  font-size: 11.5px;
+  color: var(--texto-sec);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.user-email-text {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.btn-header-logout {
+  background: #fff;
+  border: 1px solid var(--border-card);
+  color: var(--texto-sec);
+  font-family: var(--font-subheading);
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: var(--radius-xl);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn-header-logout:hover {
+  background: #fff0f4;
+  color: var(--rosa);
+  border-color: var(--rosa-borda);
+}
+
+@media (max-width: 1280px) {
+  .brand-tagline {
+    display: none;
+  }
+  .app-header {
+    padding: 0 14px;
+    gap: 8px;
+  }
+  .nav-btn {
+    padding: 6px 10px;
+    font-size: 11.5px;
+    gap: 4px;
+  }
+  .user-email-text {
+    max-width: 80px;
+  }
+  .sync-badge {
+    font-size: 10.5px;
+  }
 }
 
 /* ==========================================================================
