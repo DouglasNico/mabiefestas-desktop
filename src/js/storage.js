@@ -1,3 +1,18 @@
+﻿window.NOMES_CAT_EXATO = {
+  rechaud: "Réchauds",
+  rechauds: "Réchauds",
+  toalha: "Toalhas & Mesa",
+  toalhas: "Toalhas & Mesa",
+  prato: "Pratos & Louças",
+  pratos: "Pratos & Louças",
+  talher: "Talheres",
+  talheres: "Talheres",
+  taca: "Copos & Taças",
+  tacas: "Copos & Taças",
+  taça: "Copos & Taças",
+  taças: "Copos & Taças",
+  buffet: "Buffet"
+};
 /**
  * storage.js - Camada de Persistência e Dados Iniciais para Mabie Festas
  */

@@ -1,9 +1,9 @@
-﻿import { AuthModule } from './auth.js';
-import { FirebaseSync } from './firebase-sync.js';
-
 /**
  * app.js - Orquestrador Principal do Sistema Mabie Festas Desktop
  */
+
+import { AuthModule } from './auth.js';
+import { FirebaseSync } from './firebase-sync.js';
 
 const App = {
   abaAtiva: 'orcamento',
@@ -108,15 +108,15 @@ const App = {
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const config = StorageService.getConfig();
 
+      const config = StorageService.getConfig();
       config.empresa = {
-        nome: document.getElementById('cfg-nome-empresa')?.value.trim() || 'Mabie Festas',
-        slogan: document.getElementById('cfg-slogan')?.value.trim() || '',
+        nome: document.getElementById('cfg-nome-empresa')?.value.trim() || 'MABIE FESTAS',
+        slogan: document.getElementById('cfg-slogan')?.value.trim() || 'Locação de Artigos para Festas',
         cnpj: document.getElementById('cfg-cnpj')?.value.trim() || '',
         telefone: document.getElementById('cfg-telefone')?.value.trim() || '',
-        instagram: document.getElementById('cfg-instagram')?.value.trim() || '',
-        cidade: document.getElementById('cfg-cidade')?.value.trim() || '',
+        instagram: document.getElementById('cfg-instagram')?.value.trim() || '@mabiefesta',
+        cidade: document.getElementById('cfg-cidade')?.value.trim() || 'Campinas - SP',
         chavePix: document.getElementById('cfg-chave-pix')?.value.trim() || '',
         taxaPadraoFrete: parseFloat(document.getElementById('cfg-frete-padrao')?.value) || 0,
         percentualSinalPadrao: parseFloat(document.getElementById('cfg-sinal-padrao')?.value) || 50,
@@ -164,10 +164,10 @@ const App = {
     if (window.electronAPI && window.electronAPI.onUpdaterMessage) {
       window.electronAPI.onUpdaterMessage((data) => {
         if (data.tipo === 'disponivel') {
-          this.showToast(\🚀 Atualização v\ sendo baixada...\, 'info');
+          this.showToast(`🚀 Atualização v${data.versao} sendo baixada...`, 'info');
         } else if (data.tipo === 'baixado') {
-          this.showToast(\🎉 Versão v\ pronta para instalar!\, 'success');
-          if (confirm(\Uma nova versão (v\) foi baixada! Deseja reiniciar o sistema agora para aplicar?\)) {
+          this.showToast(`🎉 Versão v${data.versao} pronta para instalar!`, 'success');
+          if (confirm(`Uma nova versão (v${data.versao}) foi baixada! Deseja reiniciar o sistema agora para aplicar?`)) {
             window.electronAPI.quitAndInstallUpdate();
           }
         }
@@ -198,6 +198,7 @@ const App = {
       if (statusEl) statusEl.textContent = '🟢 Versão atualizada.';
     }
   },
+
   showToast(mensagem, tipo = 'info') {
     const container = document.getElementById('toast-container');
     if (!container) return;
@@ -225,8 +226,11 @@ const App = {
 };
 
 window.App = App;
+export { App };
 
-// Iniciar ao carregar DOM
-document.addEventListener('DOMContentLoaded', () => {
+// Inicializar App ao carregar DOM
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => App.init());
+} else {
   App.init();
-});
+}

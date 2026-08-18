@@ -1,20 +1,4 @@
-﻿const NOMES_CAT_EXATO = {
-  rechaud: "Réchauds",
-  rechauds: "Réchauds",
-  toalha: "Toalhas & Mesa",
-  toalhas: "Toalhas & Mesa",
-  prato: "Pratos & Louças",
-  pratos: "Pratos & Louças",
-  talher: "Talheres",
-  talheres: "Talheres",
-  taca: "Copos & Taças",
-  tacas: "Copos & Taças",
-  taça: "Copos & Taças",
-  taças: "Copos & Taças",
-  buffet: "Buffet"
-};
-
-/**
+﻿/**
  * orcamento.js - Montador de Orçamentos (Catálogo Visual + Carrinho Interativo)
  */
 
@@ -146,7 +130,7 @@ const OrcamentoModule = {
         <div class="card-produto ${esgotado ? 'esgotado' : ''}">
           <div class="card-img-wrap">
             <img src="${prod.imagem || 'https://images.unsplash.com/photo-1555244162-803834f70033?w=500'}" alt="${prod.nome}" loading="lazy">
-            <span class="badge-cat">${NOMES_CAT_EXATO[(prod.categoria || "").toLowerCase().trim()] || "Artigo"}</span>
+            <span class="badge-cat">${window.NOMES_CAT_EXATO[(prod.categoria || "").toLowerCase().trim()] || "Artigo"}</span>
             ${prod.codigo ? `<span class="badge-code">${prod.codigo}</span>` : ''}
           </div>
           <div class="card-content">

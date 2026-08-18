@@ -1,20 +1,4 @@
-﻿const NOMES_CAT_EXATO = {
-  rechaud: "Réchauds",
-  rechauds: "Réchauds",
-  toalha: "Toalhas & Mesa",
-  toalhas: "Toalhas & Mesa",
-  prato: "Pratos & Louças",
-  pratos: "Pratos & Louças",
-  talher: "Talheres",
-  talheres: "Talheres",
-  taca: "Copos & Taças",
-  tacas: "Copos & Taças",
-  taça: "Copos & Taças",
-  taças: "Copos & Taças",
-  buffet: "Buffet"
-};
-
-/**
+﻿/**
  * estoque.js - Gestão de Estoque e Cadastro de Artigos para Locação
  */
 
@@ -112,7 +96,7 @@ const EstoqueModule = {
           </td>
           <td>
             <strong>${prod.nome}</strong>
-            <span class="d-block text-muted small">${NOMES_CAT_EXATO[(prod.categoria || "").toLowerCase().trim()] || "Artigo"}</span>
+            <span class="d-block text-muted small">${window.NOMES_CAT_EXATO[(prod.categoria || "").toLowerCase().trim()] || "Artigo"}</span>
           </td>
           <td style="text-align: right; font-weight: bold; color: #D4AF37;">
             ${PDFGenerator.formatMoney(prod.diaria)}
