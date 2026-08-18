@@ -249,16 +249,16 @@ const PedidosModule = {
             </div>
 
             <div class="pedido-actions-btns">
-              <button type="button" class="btn-sec" style="color: var(--rosa); font-weight: 700; border-color: var(--rosa-borda); background: #fff0f4;" title="Gerar Contrato de Locação & Termo de Devolução em PDF" onclick="PedidosModule.imprimirContrato('${ped.id}')">
+              <button type="button" class="btn-sec" title="Gerar Contrato Formal de Locação & Termo de Vistoria" onclick="PedidosModule.imprimirContrato('${ped.id}')">
                 📄 Contrato
               </button>
               <button type="button" class="btn-sec" title="Editar itens e dados deste pedido" onclick="PedidosModule.editarPedido('${ped.id}')">
                 ✏️ Editar
               </button>
-              <button type="button" class="btn-sec" onclick="PedidosModule.reimprimirPDF('${ped.id}')" title="Gerar Orçamento / Recibo">
+              <button type="button" class="btn-sec" onclick="PedidosModule.reimprimirPDF('${ped.id}')" title="Gerar Orçamento / Proposta Comercial">
                 🖨️ Orçamento
               </button>
-              <button type="button" class="btn-sec" onclick="PedidosModule.copiarWhatsAppPedido('${ped.id}')">
+              <button type="button" class="btn-sec" onclick="PedidosModule.copiarWhatsAppPedido('${ped.id}')" title="Copiar Mensagem p/ WhatsApp">
                 💬 WhatsApp
               </button>
               <button type="button" class="btn-action-icon text-danger" title="Excluir Pedido" onclick="PedidosModule.excluirPedido('${ped.id}')">
