@@ -230,7 +230,7 @@ const App = {
         if (v) versionEl.textContent = `v${v}`;
       } catch (e) {}
     } else {
-      versionEl.textContent = 'v1.0.7';
+      versionEl.textContent = 'v1.0.8';
     }
   },
 

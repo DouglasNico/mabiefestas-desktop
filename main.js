@@ -52,7 +52,12 @@ if (!gotTheLock) {
       windowConfig.icon = iconPath;
     }
 
+    windowConfig.show = false;
     mainWindow = new BrowserWindow(windowConfig);
+
+    // Sempre abrir maximizado na tela inteira
+    mainWindow.maximize();
+    mainWindow.show();
 
     mainWindow.loadFile('index.html');
 
