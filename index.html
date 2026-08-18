@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -265,11 +265,14 @@
               <span id="btn-salvar-pedido-texto">💾 Confirmar & Salvar Pedido</span>
             </button>
             <div class="secondary-actions-row">
-              <button type="button" class="btn-secondary-action" onclick="OrcamentoModule.gerarPDF()">
-                <span>📄 Gerar PDF</span>
+              <button type="button" class="btn-secondary-action" onclick="OrcamentoModule.gerarContrato()" style="color: var(--rosa); font-weight: 700; border-color: var(--rosa-borda); background: #fff0f4;" title="Gerar Contrato de Locação & Termo de Devolução">
+                <span>📄 Contrato</span>
               </button>
-              <button type="button" class="btn-secondary-action btn-whatsapp" onclick="OrcamentoModule.copiarWhatsApp()">
-                <span>💬 Copiar p/ WhatsApp</span>
+              <button type="button" class="btn-secondary-action" onclick="OrcamentoModule.gerarPDF()" title="Gerar Orçamento / Recibo">
+                <span>🖨️ Orçamento</span>
+              </button>
+              <button type="button" class="btn-secondary-action btn-whatsapp" onclick="OrcamentoModule.copiarWhatsApp()" title="Copiar p/ WhatsApp">
+                <span>💬 WhatsApp</span>
               </button>
             </div>
           </div>

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * orcamento.js - Montador de Orçamentos (Catálogo Visual + Carrinho Interativo)
  */
 
@@ -386,12 +386,20 @@ const OrcamentoModule = {
     return true;
   },
 
+  gerarContrato() {
+    if (!this.validarCarrinho()) return;
+    const orcamento = this.coletarDadosOrcamento();
+    const config = StorageService.getConfig();
+    PDFGenerator.imprimirContrato(orcamento, config);
+    App.showToast('Contrato de Locação gerado com sucesso!', 'success');
+  },
+
   gerarPDF() {
     if (!this.validarCarrinho()) return;
     const orcamento = this.coletarDadosOrcamento();
     const config = StorageService.getConfig();
     PDFGenerator.imprimirOuSalvar(orcamento, config);
-    App.showToast('Janela de impressão/PDF gerada com sucesso!', 'success');
+    App.showToast('Janela de orçamento em PDF gerada com sucesso!', 'success');
   },
 
   copiarWhatsApp() {

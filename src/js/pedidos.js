@@ -1,4 +1,4 @@
-﻿/**
+/**
  * pedidos.js - Gestão do Ciclo de Vida dos Pedidos & Controle de Devoluções
  */
 
@@ -249,11 +249,14 @@ const PedidosModule = {
             </div>
 
             <div class="pedido-actions-btns">
-              <button type="button" class="btn-sec" style="color: var(--rosa); font-weight: 700; border-color: var(--rosa-borda);" title="Editar itens e dados deste pedido" onclick="PedidosModule.editarPedido('${ped.id}')">
+              <button type="button" class="btn-sec" style="color: var(--rosa); font-weight: 700; border-color: var(--rosa-borda); background: #fff0f4;" title="Gerar Contrato de Locação & Termo de Devolução em PDF" onclick="PedidosModule.imprimirContrato('${ped.id}')">
+                📄 Contrato
+              </button>
+              <button type="button" class="btn-sec" title="Editar itens e dados deste pedido" onclick="PedidosModule.editarPedido('${ped.id}')">
                 ✏️ Editar
               </button>
-              <button type="button" class="btn-sec" onclick="PedidosModule.reimprimirPDF('${ped.id}')">
-                🖨️ PDF
+              <button type="button" class="btn-sec" onclick="PedidosModule.reimprimirPDF('${ped.id}')" title="Gerar Orçamento / Recibo">
+                🖨️ Orçamento
               </button>
               <button type="button" class="btn-sec" onclick="PedidosModule.copiarWhatsAppPedido('${ped.id}')">
                 💬 WhatsApp
@@ -266,6 +269,15 @@ const PedidosModule = {
         </div>
       `;
     }).join('');
+  },
+
+  imprimirContrato(id) {
+    const pedidos = StorageService.getPedidos();
+    const ped = pedidos.find(p => p.id === id);
+    if (!ped) return;
+
+    const config = StorageService.getConfig();
+    PDFGenerator.imprimirContrato(ped, config);
   },
 
   editarPedido(id) {
