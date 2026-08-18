@@ -1,5 +1,5 @@
 !define PRODUCT_NAME "Mabiê Festas Gestão"
-!define PRODUCT_VERSION "1.0.4"
+!define PRODUCT_VERSION "1.0.5"
 !define PRODUCT_PUBLISHER "Mabiê Festas"
 !define PRODUCT_WEB_SITE "https://www.mabiefestas.com.br"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\Mabie Festas.exe"
@@ -31,7 +31,7 @@ RequestExecutionLevel admin
 !insertmacro MUI_LANGUAGE "PortugueseBR"
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "d:\Estudos\aula-sql\Aplicativo\dist\Mabie Festas Gestão Setup 1.0.4.exe"
+OutFile "d:\Estudos\aula-sql\Aplicativo\dist\Mabie Festas Gestão Setup 1.0.5.exe"
 InstallDir "$PROGRAMFILES64\Mabiê Festas"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
