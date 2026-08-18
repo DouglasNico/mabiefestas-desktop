@@ -140,10 +140,20 @@ const EstoqueModule = {
     if (form) form.reset();
     if (title) title.textContent = '✨ Cadastrar Novo Artigo de Festa';
 
-    // Gerar código sugerido
-    const inputCod = document.getElementById('prod-codigo');
+    // Gerar código sequencial sugerido oficial (ex: PRD-021)
+    const produtos = StorageService.getProdutos() || [];
+    let maiorNum = 0;
+    produtos.forEach(p => {
+      const match = (p.codigo || "").match(/(?:PRD|ART|PROD)[-_]?0*(\d+)/i);
+      if (match && match[1]) {
+        const n = parseInt(match[1], 10);
+        if (n > maiorNum) maiorNum = n;
+      }
+    });
+    const proximoNum = maiorNum > 0 ? (maiorNum + 1) : (produtos.length + 1);
+    const inputCod = document.getElementById("prod-codigo");
     if (inputCod) {
-      inputCod.value = 'ART-' + Math.floor(100 + Math.random() * 900);
+      inputCod.value = "PRD-" + String(proximoNum).padStart(3, "0");
     }
 
     if (modal) modal.classList.add('active');
