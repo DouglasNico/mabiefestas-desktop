@@ -3,10 +3,15 @@ const path = require('path');
 const fs = require('fs');
 
 let autoUpdater = null;
+let updaterError = null;
 try {
   autoUpdater = require('electron-updater').autoUpdater;
 } catch (e) {
-  console.log('electron-updater não disponível no momento');
+  updaterError = String(e.stack || e.message || e);
+  console.error('electron-updater falhou:', updaterError);
+  try {
+    fs.writeFileSync(path.join(app.getPath('userData'), 'updater_load_error.log'), updaterError, 'utf8');
+  } catch (fsErr) {}
 }
 
 let mainWindow;
@@ -147,6 +152,9 @@ if (!gotTheLock) {
         }
         return { success: false, error: msg, msg: `Não foi possível verificar no momento (v${currentVer}).` };
       }
+    }
+    if (updaterError) {
+      return { success: false, isDev: true, msg: `⚠️ Auto-Updater indisponível: ${updaterError.split('\n')[0]}` };
     }
     return { success: true, isDev: true, msg: `🟢 Modo de desenvolvimento (v${currentVer}).` };
   });

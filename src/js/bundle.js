@@ -20984,7 +20984,7 @@ This typically indicates that your device does not have a healthy Internet conne
         } catch (e) {
         }
       } else {
-        versionEl.textContent = "v1.0.6";
+        versionEl.textContent = "v1.0.7";
       }
     },
     async verificarAtualizacoes() {
