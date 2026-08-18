@@ -57,6 +57,7 @@ const App = {
       window.PedidosModule.renderizarPedidos();
     } else if (nomeAba === 'config') {
       this.carregarConfiguracoesNaTela();
+      this.carregarVersaoApp();
     }
 
     this.atualizarStatsDashboard();
@@ -185,7 +186,7 @@ const App = {
         if (v) versionEl.textContent = `v${v}`;
       } catch (e) {}
     } else {
-      versionEl.textContent = 'v1.0.3';
+      versionEl.textContent = 'v1.0.5';
     }
   },
 

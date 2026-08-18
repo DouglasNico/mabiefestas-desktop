@@ -68,6 +68,7 @@ if (!gotTheLock) {
         owner: 'DouglasNico',
         repo: 'mabiefestas-desktop'
       });
+      autoUpdater.forceDevUpdateConfig = true;
     } catch (e) {
       console.log('[AutoUpdater] FeedURL setup:', e?.message || e);
     }
@@ -105,14 +106,14 @@ if (!gotTheLock) {
       console.log('[AutoUpdater] Info de conexão:', err?.message || err);
     });
 
-    // Checar atualizações automaticamente 5 segundos após abrir se for executável empacotado
+    // Checar atualizações automaticamente 4 segundos após abrir a janela
     setTimeout(() => {
-      if (app.isPackaged) {
+      if (autoUpdater) {
         autoUpdater.checkForUpdatesAndNotify().catch((err) => {
           console.log('[AutoUpdater] Verificação inicial:', err?.message);
         });
       }
-    }, 5000);
+    }, 4000);
   }
 
   app.whenReady().then(() => {
@@ -134,7 +135,7 @@ if (!gotTheLock) {
   // IPC Handler: Verificar atualizações manualmente pelo botão das Configurações
   ipcMain.handle('check-for-updates', async () => {
     const currentVer = app.getVersion();
-    if (autoUpdater && app.isPackaged) {
+    if (autoUpdater) {
       try {
         const res = await autoUpdater.checkForUpdates();
         return { success: true, updateInfo: res?.updateInfo };

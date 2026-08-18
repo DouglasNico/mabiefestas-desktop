@@ -20838,6 +20838,7 @@ This typically indicates that your device does not have a healthy Internet conne
         window.PedidosModule.renderizarPedidos();
       } else if (nomeAba === "config") {
         this.carregarConfiguracoesNaTela();
+        this.carregarVersaoApp();
       }
       this.atualizarStatsDashboard();
     },
@@ -20948,7 +20949,7 @@ This typically indicates that your device does not have a healthy Internet conne
         } catch (e) {
         }
       } else {
-        versionEl.textContent = "v1.0.3";
+        versionEl.textContent = "v1.0.5";
       }
     },
     async verificarAtualizacoes() {
