@@ -11,32 +11,8 @@ const EstoqueModule = {
   arquivosNovos: [],
 
   init() {
-    this.renderizarTabsCategorias();
-    this.renderizarEstoque();
     this.bindEvents();
-  },
-
-  renderizarTabsCategorias() {
-    const container = document.getElementById('estoque-categorias-tabs');
-    if (!container) return;
-
-    const cats = [
-      { id: 'todos', nome: 'Todos os Artigos' },
-      { id: 'rechaud', nome: '🍲 Réchauds' },
-      { id: 'toalhas', nome: '✨ Toalhas & Mesa' },
-      { id: 'pratos', nome: '🍽️ Pratos & Louças' },
-      { id: 'talheres', nome: '🍴 Talheres' },
-      { id: 'tacas', nome: '🍷 Copos & Taças' },
-      { id: 'buffet', nome: '🍹 Buffet' }
-    ];
-
-    container.innerHTML = cats.map(c => `
-      <button type="button" 
-              class="cat-tab ${this.filtroCategoria === c.id ? 'active' : ''}" 
-              onclick="EstoqueModule.filtrarPorCategoria('${c.id}')">
-        ${c.nome}
-      </button>
-    `).join('');
+    this.renderizarEstoque();
   },
 
   bindEvents() {
@@ -47,23 +23,59 @@ const EstoqueModule = {
         this.renderizarEstoque();
       });
     }
+
+    const selectFiltro = document.getElementById('estoque-filtro-cat');
+    if (selectFiltro) {
+      selectFiltro.addEventListener('change', (e) => {
+        this.filtroCategoria = e.target.value;
+        this.renderizarEstoque();
+      });
+    }
   },
 
   filtrarPorCategoria(catId) {
     this.filtroCategoria = catId;
-    this.renderizarTabsCategorias();
+    const selectFiltro = document.getElementById('estoque-filtro-cat');
+    if (selectFiltro) selectFiltro.value = catId;
     this.renderizarEstoque();
   },
 
   renderizarEstoque() {
-    const tbody = document.getElementById('estoque-tbody');
-    const badgeTotal = document.getElementById('estoque-total-artigos');
+    const tbody = document.getElementById('estoque-tabela-corpo') || document.getElementById('estoque-tbody');
     if (!tbody) return;
 
     let produtos = StorageService.getProdutos() || [];
 
+    // Calcular estatísticas do topo
+    let totalEstoque = 0;
+    let totalAlugado = 0;
+    let patrimonioTotal = 0;
+
+    produtos.forEach(p => {
+      const tot = parseInt(p.estoqueTotal || 0, 10);
+      const alug = parseInt(p.estoqueAlugado || 0, 10);
+      const rep = parseFloat(p.reposicao || (p.diaria ? p.diaria * 10 : 0));
+      totalEstoque += tot;
+      totalAlugado += alug;
+      patrimonioTotal += (tot * rep);
+    });
+
+    const elTotal = document.getElementById('stat-estoque-total');
+    const elAlug = document.getElementById('stat-estoque-alug');
+    const elDisp = document.getElementById('stat-estoque-disp');
+    const elPatrimonio = document.getElementById('stat-estoque-patrimonio');
+
+    if (elTotal) elTotal.textContent = totalEstoque;
+    if (elAlug) elAlug.textContent = totalAlugado;
+    if (elDisp) elDisp.textContent = Math.max(0, totalEstoque - totalAlugado);
+    if (elPatrimonio) {
+      elPatrimonio.textContent = (window.Utils && window.Utils.formatarMoeda) 
+        ? window.Utils.formatarMoeda(patrimonioTotal) 
+        : ('R$ ' + patrimonioTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }));
+    }
+
     // Filtros
-    if (this.filtroCategoria !== 'todos') {
+    if (this.filtroCategoria && this.filtroCategoria !== 'todos') {
       const catBusca = this.filtroCategoria.toLowerCase().replace(/s$/, "");
       produtos = produtos.filter(p => {
         const pCat = (p.categoria || "").toLowerCase().replace(/s$/, "");
@@ -79,12 +91,10 @@ const EstoqueModule = {
       );
     }
 
-    if (badgeTotal) badgeTotal.textContent = `${produtos.length} artigos`;
-
     if (produtos.length === 0) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="7" style="text-align:center; padding: 40px; color: var(--texto-muted);">
+          <td colspan="8" style="text-align:center; padding: 40px; color: var(--texto-muted);">
             Nenhum artigo encontrado para o filtro selecionado.
           </td>
         </tr>
@@ -92,10 +102,17 @@ const EstoqueModule = {
       return;
     }
 
+    const formatar = (val) => (window.Utils && window.Utils.formatarMoeda) 
+      ? window.Utils.formatarMoeda(val) 
+      : ('R$ ' + Number(val || 0).toFixed(2).replace('.', ','));
+
     tbody.innerHTML = produtos.map(prod => {
-      const disponivel = Math.max(0, (prod.estoqueTotal || 0) - (prod.estoqueAlugado || 0));
+      const tot = parseInt(prod.estoqueTotal || 0, 10);
+      const alug = parseInt(prod.estoqueAlugado || 0, 10);
+      const disponivel = Math.max(0, tot - alug);
       const statusClass = disponivel > 3 ? 'status-disponivel' : (disponivel > 0 ? 'status-alugado' : 'status-manutencao');
       const statusTexto = disponivel > 3 ? 'Disponível' : (disponivel > 0 ? 'Últimas Peças' : 'Esgotado');
+      const pctDisp = tot > 0 ? Math.round((disponivel / tot) * 100) : 0;
 
       const fotoUrl = prod.imagem || (prod.imagens && prod.imagens[0]) || 'https://images.unsplash.com/photo-1555244162-803834f70033?w=100';
       const catExata = (window.NOMES_CAT_EXATO && window.NOMES_CAT_EXATO[prod.categoria]) 
@@ -104,31 +121,40 @@ const EstoqueModule = {
 
       return `
         <tr>
+          <td style="text-align: center;">
+            <img src="${fotoUrl}" class="item-foto-thumb" alt="${prod.nome}" onerror="this.src='https://images.unsplash.com/photo-1555244162-803834f70033?w=100'">
+          </td>
           <td>
-            <div style="display:flex; align-items:center; gap: 12px;">
-              <img src="${fotoUrl}" class="item-foto-thumb" alt="${prod.nome}" onerror="this.src='https://images.unsplash.com/photo-1555244162-803834f70033?w=100'">
-              <div>
-                <strong style="display:block; color: var(--texto);">${prod.nome}</strong>
-                <span class="badge-tag">${catExata}</span>
+            <span style="font-family: monospace; font-weight:700; color: var(--rosa); font-size: 13px;">${prod.codigo || 'S/C'}</span>
+          </td>
+          <td>
+            <strong style="display:block; color: var(--texto); font-size: 13px;">${prod.nome}</strong>
+            <span class="badge-tag" style="margin-top: 4px;">${catExata}</span>
+          </td>
+          <td style="text-align: right;">
+            <strong style="color: var(--rosa); font-size: 13px;">${formatar(prod.diaria || 0)}</strong>
+          </td>
+          <td style="text-align: right; color: var(--texto-sec);">
+            ${formatar(prod.reposicao || 0)}
+          </td>
+          <td>
+            <div style="display:flex; flex-direction:column; gap: 4px;">
+              <div style="display:flex; justify-content:space-between; font-size: 11px;">
+                <span>Disponível: <strong style="color: var(--status-success);">${disponivel}</strong></span>
+                <span style="color: var(--texto-sec);">Total: <strong>${tot}</strong> un</span>
+              </div>
+              <div style="height: 6px; background: rgba(0,0,0,0.06); border-radius: 3px; overflow: hidden;">
+                <div style="width: ${pctDisp}%; height: 100%; background: ${pctDisp > 30 ? 'var(--status-success)' : 'var(--status-danger)'};"></div>
               </div>
             </div>
           </td>
-          <td><span style="font-family: monospace; font-weight:700; color: var(--rosa);">${prod.codigo || 'S/C'}</span></td>
-          <td><strong style="color: var(--rosa);">${Utils.formatarMoeda(prod.diaria || 0)}</strong></td>
-          <td>${Utils.formatarMoeda(prod.reposicao || 0)}</td>
-          <td>
-            <div style="display:flex; flex-direction:column; gap: 2px;">
-              <span>Total: <strong>${prod.estoqueTotal || 0}</strong> un</span>
-              <span style="font-size: 11px; color: var(--texto-sec);">Alugadas: ${prod.estoqueAlugado || 0}</span>
-            </div>
-          </td>
-          <td>
+          <td style="text-align: center;">
             <span class="status-badge ${statusClass}">
-              ● ${disponivel} un (${statusTexto})
+              ● ${statusTexto}
             </span>
           </td>
-          <td>
-            <div class="acoes-cell">
+          <td style="text-align: right;">
+            <div class="acoes-cell" style="justify-content: flex-end; gap: 6px;">
               <button type="button" class="btn-action-sm btn-action-edit" title="Editar Artigo" onclick="EstoqueModule.abrirModalEditar('${prod.id}')">
                 ✏️ Editar
               </button>
